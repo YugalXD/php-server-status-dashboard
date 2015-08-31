@@ -67,8 +67,17 @@ class Server {
 		$uptime_raw = exec('uptime');
 		preg_match_all('/\d{1,3}\sday/', $uptime_raw, $uptime_days);
 		preg_match_all('/\d{1,2}:\d{1,2}\,/', $uptime_raw, $uptime_hours);
-		$days = str_replace(' day', '', $uptime_days[0][0]);
+		preg_match_all('/\d{0,9} min,/', $uptime_raw, $uptime_mins);
+		if(isset($uptime_days[0][0])){
+			$days = str_replace(' day', '', $uptime_days[0][0]);
+		}else{
+			$days = '0';
+		}
+		if(isset($uptime_hours[0][0])){
 		$hours = str_replace(',', '', $uptime_hours[0][0]);
+		}elseif(isset($uptime_mins[0][0])){
+			$hours = '00:'.str_replace('min,','',$uptime_mins[0][0]);
+		}
 		return array(
 			'days'	=>	empty($days) ? '0' : $days,
 			'hours'	=>	empty($hours) ? '00:00' : $hours
